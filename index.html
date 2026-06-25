@@ -20,6 +20,7 @@
 html, body {
   width: 100%; height: 100%;
   overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -490,12 +491,77 @@ body {
 #lightbox-prev:hover,
 #lightbox-next:hover { background: rgba(255,255,255,0.25); }
 
-@media (max-width: 640px) {
-  .card-wrap { width: 92vw; height: auto; aspect-ratio: 1530/970; }
-  .main-title { font-size: 36px; }
-  .popup-inner { width: 92vw; }
-  .works-inner { padding: 1rem 1rem 3rem; }
+@media (max-width: 900px) {
+  /* Card */
+  .card-wrap {
+    width: 96vw;
+    height: auto;
+    aspect-ratio: 1530/970;
+  }
+
+  /* Nav buttons scale down */
+  .hd-btn { width: 22vw; height: 9vw; }
+  .nav-btns { gap: 3vw; }
+  #contact-btn-wrap .hd-btn { width: 26vw; height: 10vw; }
+
+  /* Popups — full width, centered, scrollable */
+  .popup {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%);
+    width: 96vw;
+    max-height: 90vh;
+    z-index: 200;
+  }
+  .popup-inner {
+    width: 100%;
+    height: auto;
+    min-height: 60vw;
+    max-height: 88vh;
+  }
+  .popup-frame-img { height: 100%; }
+  .popup-body {
+    top: 18vw;
+    left: 4vw;
+    right: 4vw;
+    bottom: 4vw;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .popup-bar { height: 18vw; }
+  .popup-close { top: 3vw; right: 4vw; width: 8vw; height: 8vw; }
+
+  /* About text smaller on mobile */
+  .about-text { font-size: 14px; }
+  .link-row { font-size: 16px; }
+  .link-row img { width: 32px; height: 32px; }
+
+  /* Works page */
+  .works-inner { padding: 1rem 0.75rem 3rem; }
+  .back-btn-hd { width: 22vw; height: 9vw; }
+  .works-title-img { height: 8vw; }
+  .works-section-title { font-size: 14px; }
+
+  /* Art cards slightly smaller */
+  .art-card { width: 150px; }
+  .art-card.wide { width: 240px; }
+  .art-card.tall { width: 120px; }
+
+  /* Lightbox arrows */
+  #lightbox-prev, #lightbox-next { width: 38px; height: 38px; font-size: 22px; }
 }
+
+@media (max-width: 480px) {
+  .hd-btn { width: 28vw; height: 11vw; }
+  .nav-btns { gap: 4vw; }
+  #contact-btn-wrap .hd-btn { width: 32vw; height: 13vw; }
+  .about-text { font-size: 13px; }
+  .popup-body { top: 20vw; }
+  .popup-bar { height: 20vw; }
+  .popup-close { top: 4vw; right: 4vw; width: 10vw; height: 10vw; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .art-card, .hd-btn, .back-btn-hd, .email-btn { transition: none; }
 }
