@@ -499,6 +499,12 @@ body {
     aspect-ratio: 1530/970;
   }
 
+  /* Push buttons further down on the card */
+  .card-content {
+    padding: 0 4vw 8vw;
+    justify-content: flex-end;
+  }
+
   /* Nav buttons scale down */
   .hd-btn { width: 22vw; height: 9vw; }
   .nav-btns { gap: 3vw; }
@@ -530,7 +536,14 @@ body {
     overflow-y: auto;
   }
   .popup-bar { height: 18vw; }
-  .popup-close { top: 3vw; right: 4vw; width: 8vw; height: 8vw; }
+
+  /* X button — small and tight to top right */
+  .popup-close {
+    top: 2.5vw;
+    right: 3vw;
+    width: 5vw;
+    height: 5vw;
+  }
 
   /* About text smaller on mobile */
   .about-text { font-size: 14px; }
@@ -556,10 +569,16 @@ body {
   .hd-btn { width: 28vw; height: 11vw; }
   .nav-btns { gap: 4vw; }
   #contact-btn-wrap .hd-btn { width: 32vw; height: 13vw; }
+  .card-content { padding: 0 4vw 9vw; }
   .about-text { font-size: 13px; }
   .popup-body { top: 20vw; }
   .popup-bar { height: 20vw; }
-  .popup-close { top: 4vw; right: 4vw; width: 10vw; height: 10vw; }
+  .popup-close {
+    top: 3vw;
+    right: 3.5vw;
+    width: 6vw;
+    height: 6vw;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
