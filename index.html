@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>guashi — 2d illustrator</title>
+<link href="https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #EDE8DF;
+  --ink:   #1a1a1a;
+  --purple: #4a3db5;
+  --salmon: #e88b7a;
+  --white: #ffffff;
+  --font: 'Yusei Magic', sans-serif;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  background-color: var(--cream);
+  background-image: url('assets/background/Background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+
+
+/* =========================================================
+   MAIN PAGE
+   ========================================================= */
+#main-page {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  transition: opacity 0.2s;
+}
+
+.card-wrap {
+  position: relative;
+  width: 1224px;
+  height: 776px;
+}
+
+.card-frame-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
+.card-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 96px 72px;
+}
+
+.main-title {
+  font-family: var(--font);
+  font-size: 52px;
+  color: var(--ink);
+  line-height: 1.1;
+  text-align: center;
+  margin-bottom: 6px;
+}
+.main-title .purple { color: var(--purple); }
+
+.tagline {
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--white);
+  background: var(--salmon);
+  padding: 3px 14px;
+  border-radius: 3px;
+  margin-bottom: 28px;
+}
+
+.nav-btns {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+/* =========================================================
+   HAND-DRAWN BUTTONS
+   ========================================================= */
+.hd-btn {
+  position: relative;
+  width: 180px;
+  height: 72px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: block;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.hd-btn img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  transition: opacity 0.05s;
+  user-select: none;
+  pointer-events: none;
+}
+.hd-btn .btn-up   { opacity: 1; }
+.hd-btn .btn-down { opacity: 0; }
+.hd-btn.pressed .btn-up   { opacity: 0; }
+.hd-btn.pressed .btn-down { opacity: 1; }
+
+#contact-btn-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================================
+   POPUPS
+   ========================================================= */
+.popup {
+  position: fixed;
+  z-index: 200;
+  display: none;
+}
+.popup.open { display: block; }
+
+.popup-frame-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
+.popup-inner {
+  position: relative;
+  width: 960px;
+  height: 620px;
+}
+
+.popup-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 104px;
+  cursor: grab;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
+.popup-bar:active { cursor: grabbing; }
+
+.popup-title {
+  display: none;
+}
+
+.popup-close {
+  position: absolute;
+  top: 12px;
+  right: 28px;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 3;
+}
+.popup-close:hover { background: rgba(255,255,255,0.15); }
+
+.popup-body {
+  position: absolute;
+  top: 112px; left: 36px; right: 36px; bottom: 28px;
+  overflow-y: auto;
+  padding: 10px 14px;
+}
+
+.links-section-label {
+  font-family: var(--font);
+  font-size: 20px;
+  color: var(--salmon);
+  margin: 14px 0 6px;
+}
+.links-section-label::before { content: '{ '; }
+.links-section-label::after  { content: ' }'; }
+
+.link-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 8px;
+  text-decoration: none;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 24px;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+.link-row:hover { background: rgba(74,61,181,0.08); }
+.link-row img { width: 48px; height: 48px; object-fit: contain; }
+
+.about-text {
+  font-family: var(--font);
+  font-size: 20px;
+  line-height: 1.8;
+  color: var(--ink);
+}
+.about-text p { margin-bottom: 16px; }
+.about-text strong { color: var(--purple); }
+
+.contact-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 24px;
+  text-align: center;
+}
+.contact-body p {
+  font-family: var(--font);
+  font-size: 20px;
+  color: #5a4a32;
+  line-height: 1.7;
+}
+.email-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font);
+  font-size: 24px;
+  color: var(--purple);
+  background: var(--white);
+  border: 2.5px solid var(--ink);
+  border-radius: 30px;
+  padding: 12px 36px;
+  text-decoration: none;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.08s;
+  cursor: pointer;
+}
+.email-btn:active {
+  transform: translate(3px,3px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+/* =========================================================
+   WORKS PAGE
+   ========================================================= */
+#works-page {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  background-color: var(--cream);
+  background-image: url('assets/background/Background.png');
+  background-size: cover;
+  background-position: center;
+  overflow-y: auto;
+}
+
+#works-page.open { display: block; }
+
+.works-inner {
+  position: relative;
+  z-index: 1;
+  background: rgba(255,255,255,0.92);
+  max-width: 860px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 2rem 2.5rem 4rem;
+  border-left: 2px solid rgba(26,26,26,0.12);
+  border-right: 2px solid rgba(26,26,26,0.12);
+}
+
+.works-topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 1.5rem;
+}
+
+/* back button — hand-drawn */
+.back-btn-hd {
+  position: relative;
+  width: 180px;
+  height: 72px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: block;
+  user-select: none;
+  flex-shrink: 0;
+}
+.back-btn-hd img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  transition: opacity 0.05s;
+  pointer-events: none;
+}
+.back-btn-hd .btn-up   { opacity: 1; }
+.back-btn-hd .btn-down { opacity: 0; }
+.back-btn-hd.pressed .btn-up   { opacity: 0; }
+.back-btn-hd.pressed .btn-down { opacity: 1; }
+
+.works-title-img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+.works-section { margin-bottom: 2.5rem; }
+
+.works-section-title {
+  font-family: var(--font);
+  font-size: 18px;
+  color: var(--purple);
+  margin-bottom: 1rem;
+  padding-bottom: 6px;
+  border-bottom: 2px dashed rgba(74,61,181,0.2);
+}
+
+/* horizontal slider */
+.slider {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(74,61,181,0.25) transparent;
+}
+.slider::-webkit-scrollbar { height: 4px; }
+.slider::-webkit-scrollbar-thumb {
+  background: rgba(74,61,181,0.25);
+  border-radius: 2px;
+}
+
+.art-card {
+  flex-shrink: 0;
+  width: 200px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--white);
+  scroll-snap-align: start;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+  position: relative;
+}
+.art-card:hover {
+  transform: translateY(-4px) rotate(0.3deg);
+  box-shadow: 4px 6px 16px rgba(26,26,26,0.12);
+}
+.art-card.wide { width: 320px; }
+.art-card.tall { width: 160px; }
+
+.art-thumb {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+  background: #ddd8cc;
+}
+.art-card.wide .art-thumb { aspect-ratio: 16/9; }
+.art-card.tall .art-thumb { aspect-ratio: 3/4; }
+
+.hot-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  height: 22px;
+  width: auto;
+  pointer-events: none;
+}
+
+.art-desc {
+  padding: 8px 10px;
+  border-top: 1.5px solid #e8e4dc;
+}
+.art-name {
+  font-family: var(--font);
+  font-size: 12px;
+  color: var(--ink);
+  line-height: 1.4;
+}
+.art-stats {
+  font-family: var(--font);
+  font-size: 11px;
+  color: #9a8a72;
+  margin-top: 3px;
+}
+.art-stats .upvote { color: var(--salmon); }
+
+.sticker-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.sticker-card {
+  width: 130px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--white);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.sticker-card:hover { transform: scale(1.06) rotate(-1.2deg); }
+.sticker-card .art-thumb { aspect-ratio: 1/1; }
+.sticker-card .art-desc { text-align: center; }
+
+/* =========================================================
+   LIGHTBOX
+   ========================================================= */
+#lightbox {
+  position: fixed; inset: 0;
+  z-index: 500;
+  background: rgba(0,0,0,0.82);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+#lightbox.open { display: flex; }
+#lightbox img {
+  max-width: 80vw;
+  max-height: 88vh;
+  object-fit: contain;
+  border: 3px solid var(--white);
+  border-radius: 4px;
+  cursor: pointer;
+}
+#lightbox-close {
+  position: fixed;
+  top: 18px; right: 22px;
+  font-family: var(--font);
+  font-size: 28px;
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+#lightbox-prev,
+#lightbox-next {
+  font-family: var(--font);
+  font-size: 36px;
+  color: #fff;
+  background: rgba(255,255,255,0.12);
+  border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 50%;
+  width: 52px; height: 52px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  user-select: none;
+}
+#lightbox-prev:hover,
+#lightbox-next:hover { background: rgba(255,255,255,0.25); }
+
+@media (max-width: 640px) {
+  .card-wrap { width: 92vw; height: auto; aspect-ratio: 1530/970; }
+  .main-title { font-size: 36px; }
+  .popup-inner { width: 92vw; }
+  .works-inner { padding: 1rem 1rem 3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .art-card, .hd-btn, .back-btn-hd, .email-btn { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== MAIN PAGE ===================== -->
+<div id="main-page">
+
+  <div class="card-wrap">
+    <img class="card-frame-img" src="assets/Main-page/Card-Frame.png" alt="">
+    <div class="card-content">
+      <div class="nav-btns">
+        <button class="hd-btn" onclick="btnPress(this); openPopup('popup-about')" aria-label="About">
+          <img class="btn-up"   src="assets/Main-page/Button_About_UP.png"   alt="about">
+          <img class="btn-down" src="assets/Main-page/Button_About_DOWN.png" alt="">
+        </button>
+        <button class="hd-btn" onclick="btnPress(this); openWorks()" aria-label="Works">
+          <img class="btn-up"   src="assets/Main-page/Button_Works_UP.png"   alt="works">
+          <img class="btn-down" src="assets/Main-page/Button_Works_DOWN.png" alt="">
+        </button>
+        <button class="hd-btn" onclick="btnPress(this); openPopup('popup-links')" aria-label="Links">
+          <img class="btn-up"   src="assets/Main-page/Button_Link_UP.png"   alt="links">
+          <img class="btn-down" src="assets/Main-page/Button_Link_DOWN.png" alt="">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="contact-btn-wrap">
+    <button class="hd-btn" style="width:200px;height:80px;" onclick="btnPress(this); openPopup('popup-contact')" aria-label="Contact">
+      <img class="btn-up"   src="assets/Main-page/Button_Contact_UP.png"   alt="contact">
+      <img class="btn-down" src="assets/Main-page/Button_Contact_DOWN.png" alt="">
+    </button>
+  </div>
+
+</div>
+
+
+<!-- ===================== POPUP — ABOUT ===================== -->
+<div class="popup" id="popup-about" style="top:80px;left:80px;">
+  <div class="popup-inner">
+    <img class="popup-frame-img" src="assets/Popups/Popup_Frame_About.png" alt="">
+    <div class="popup-bar" onmousedown="startDrag(event,'popup-about')">
+      <span class="popup-title">about</span>
+    </div>
+    <button class="popup-close" onclick="closePopup('popup-about')" aria-label="Close">
+      <img src="assets/Popups/Popup_Window_Close_Button.png" alt="close" style="width:100%;height:100%;object-fit:contain;">
+    </button>
+    <div class="popup-body">
+      <div class="about-text">
+        <p>hey! i'm <strong>guashi</strong> — a 2d illustrator obsessed with <strong>Dota 2</strong> and <strong>Deadlock</strong> fan art.</p>
+        <p>i draw things that make the community go 🔥 — stickers that went viral on Twitter, fan art that hit the front page of <strong>r/DotA2</strong>, and thumbnails for <strong>SirActionSlacks</strong>.</p>
+        <p>when i'm not drawing i'm probably watching pro dota and losing ranked games.</p>
+        <p><strong>tools:</strong> Clip Studio Paint · Photoshop</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== POPUP — LINKS ===================== -->
+<div class="popup" id="popup-links" style="top:80px;left:140px;">
+  <div class="popup-inner">
+    <img class="popup-frame-img" src="assets/Popups/Popup_Frame_links.png" alt="">
+    <div class="popup-bar" onmousedown="startDrag(event,'popup-links')">
+      <span class="popup-title">links</span>
+    </div>
+    <button class="popup-close" onclick="closePopup('popup-links')" aria-label="Close">
+      <img src="assets/Popups/Popup_Window_Close_Button.png" alt="close" style="width:100%;height:100%;object-fit:contain;">
+    </button>
+    <div class="popup-body">
+      <p class="links-section-label">art work!</p>
+      <a class="link-row" href="#" target="_blank" rel="noopener">
+        <img src="assets/Popups/Twitter_Icon.png" alt=""> twitter
+      </a>
+      <a class="link-row" href="#" target="_blank" rel="noopener">
+        <img src="assets/Popups/Insta_Icon.png" alt=""> instagram
+      </a>
+      <a class="link-row" href="#" target="_blank" rel="noopener">
+        <img src="assets/Popups/Reddit_Icon.png" alt=""> reddit
+      </a>
+      <p class="links-section-label" style="margin-top:14px;">esports!</p>
+      <a class="link-row" href="#" target="_blank" rel="noopener">
+        <img src="assets/Popups/Liquipedia_Icon.png" alt=""> liquipedia
+      </a>
+      <a class="link-row" href="#" target="_blank" rel="noopener">
+        <img src="assets/Popups/Linkedin_Icon.png" alt=""> linkedin
+      </a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== POPUP — CONTACT ===================== -->
+<div class="popup" id="popup-contact" style="top:120px;left:100px;">
+  <div class="popup-inner">
+    <img class="popup-frame-img" src="assets/Popups/Popup_Frame_Contact.png" alt="">
+    <div class="popup-bar" onmousedown="startDrag(event,'popup-contact')">
+      <span class="popup-title">contact</span>
+    </div>
+    <button class="popup-close" onclick="closePopup('popup-contact')" aria-label="Close">
+      <img src="assets/Popups/Popup_Window_Close_Button.png" alt="close" style="width:100%;height:100%;object-fit:contain;">
+    </button>
+    <div class="popup-body">
+      <div class="contact-body">
+        <p>want to commission something,<br>collab, or just say hey?</p>
+        <a class="email-btn" href="mailto:your@email.com">✉ send me a mail</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== WORKS PAGE ===================== -->
+<div id="works-page">
+  <div class="works-inner">
+
+    <div class="works-topbar">
+      <button class="back-btn-hd" onclick="btnPress(this); closeWorks()" aria-label="Back">
+        <img class="btn-up"   src="assets/Works-page/Button_Back_UP.png"   alt="back">
+        <img class="btn-down" src="assets/Works-page/Button_Back_DOWN.png" alt="">
+      </button>
+      <img class="works-title-img" src="assets/Works-page/Works_Title.png" alt="Works">
+    </div>
+
+    <!-- DOTA 2 -->
+    <div class="works-section">
+      <div class="works-section-title">Dota 2 — drawings &amp; comics</div>
+      <div class="slider">
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/1- D2 Slacks vs WR arcana - Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/1- D2 Slacks vs WR arcana - Digital.jpg" alt="Slacks vs WR Arcana" loading="lazy">
+          <img class="hot-badge" src="assets/Works-page/Hot_Badge.png" alt="hot!">
+          <div class="art-desc">
+            <div class="art-name">Slacks vs WR Arcana</div>
+            <div class="art-stats"><span class="upvote">↑</span> r/DotA2</div>
+          </div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/2- D2 - Playtima WR - Digital.png', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/2- D2 - Playtima WR - Digital.png" alt="Playtime WR" loading="lazy">
+          <div class="art-desc"><div class="art-name">Playtime WR</div></div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/3- D2 - Ringmaster - Digital.png', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/3- D2 - Ringmaster - Digital.png" alt="Ringmaster" loading="lazy">
+          <div class="art-desc"><div class="art-name">Ringmaster</div></div>
+        </div>
+
+        <div class="art-card tall" onclick="openLightbox('assets/Artwork/Dota 2/4 - D2 Icefrog Office - Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/4 - D2 Icefrog Office - Digital.jpg" alt="Icefrog Office" loading="lazy">
+          <div class="art-desc"><div class="art-name">Icefrog Office</div></div>
+        </div>
+
+        <div class="art-card tall" onclick="openLightbox('assets/Artwork/Dota 2/5- D2 CM vs PL - Digital Comic.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/5- D2 CM vs PL - Digital Comic.jpg" alt="CM vs PL Comic" loading="lazy">
+          <img class="hot-badge" src="assets/Works-page/Hot_Badge.png" alt="hot!">
+          <div class="art-desc">
+            <div class="art-name">CM vs PL Comic</div>
+            <div class="art-stats"><span class="upvote">↑</span> r/DotA2</div>
+          </div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/6 -D2 Naga Siren Farming - Comic GIF.gif', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/6 -D2 Naga Siren Farming - Comic GIF.gif" alt="Naga Siren Farming" loading="lazy">
+          <img class="hot-badge" src="assets/Works-page/Hot_Badge.png" alt="hot!">
+          <div class="art-desc">
+            <div class="art-name">Naga Siren Farming</div>
+            <div class="art-stats"><span class="upvote">↑</span> r/DotA2 · GIF</div>
+          </div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/7 - D2 Girls Selfie - Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/7 - D2 Girls Selfie - Digital.jpg" alt="Girls Selfie" loading="lazy">
+          <div class="art-desc"><div class="art-name">Girls Selfie</div></div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/8 - D2 Phoenix - Digital.png', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/8 - D2 Phoenix - Digital.png" alt="Phoenix" loading="lazy">
+          <div class="art-desc"><div class="art-name">Phoenix</div></div>
+        </div>
+
+        <div class="art-card tall" onclick="openLightbox('assets/Artwork/Dota 2/9 - D2 PA Lore - Comic Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/9 - D2 PA Lore - Comic Digital.jpg" alt="PA Lore Comic" loading="lazy">
+          <div class="art-desc"><div class="art-name">PA Lore Comic</div></div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/10 - D2 Naga Siren Farming - Comic GIF.gif', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/10 - D2 Naga Siren Farming - Comic GIF.gif" alt="Naga Farming alt" loading="lazy">
+          <div class="art-desc"><div class="art-name">Naga Farming (alt)</div><div class="art-stats">GIF</div></div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/11 - D2 QOP - Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/11 - D2 QOP - Digital.jpg" alt="Queen of Pain" loading="lazy">
+          <div class="art-desc"><div class="art-name">Queen of Pain</div></div>
+        </div>
+
+        <div class="art-card tall" onclick="openLightbox('assets/Artwork/Dota 2/12 - D2 GabeN Anime - Comic Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/12 - D2 GabeN Anime - Comic Digital.jpg" alt="GabeN Anime Comic" loading="lazy">
+          <div class="art-desc"><div class="art-name">GabeN Anime Comic</div></div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/13 - D2 Win the Lane - Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/13 - D2 Win the Lane - Digital.jpg" alt="Win the Lane" loading="lazy">
+          <div class="art-desc"><div class="art-name">Win the Lane</div></div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/14 - D2 Skywrath Digital.png', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/14 - D2 Skywrath Digital.png" alt="Skywrath Mage" loading="lazy">
+          <div class="art-desc"><div class="art-name">Skywrath Mage</div></div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/15 -D2 Templar Assassin - Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/15 -D2 Templar Assassin - Digital.jpg" alt="Templar Assassin" loading="lazy">
+          <div class="art-desc"><div class="art-name">Templar Assassin</div></div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Dota 2/16 - D2 Duster as CM - Diogital.png', this)">
+          <img class="art-thumb" src="assets/Artwork/Dota 2/16 - D2 Duster as CM - Diogital.png" alt="Duster as CM" loading="lazy">
+          <div class="art-desc"><div class="art-name">Duster as CM</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DEADLOCK -->
+    <div class="works-section">
+      <div class="works-section-title">Deadlock</div>
+      <div class="slider">
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/deadlock/DEADLOCK_Ivy and Yamato.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/deadlock/DEADLOCK_Ivy and Yamato.jpg" alt="Ivy and Yamato" loading="lazy">
+          <img class="hot-badge" src="assets/Works-page/Hot_Badge.png" alt="hot!">
+          <div class="art-desc">
+            <div class="art-name">Ivy &amp; Yamato</div>
+            <div class="art-stats"><span class="upvote">↑</span> r/DeadlockTheGame</div>
+          </div>
+        </div>
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/deadlock/Deadlock Sevan the Cat - Digital.png', this)">
+          <img class="art-thumb" src="assets/Artwork/deadlock/Deadlock Sevan the Cat - Digital.png" alt="Sevan the Cat" loading="lazy">
+          <img class="hot-badge" src="assets/Works-page/Hot_Badge.png" alt="hot!">
+          <div class="art-desc">
+            <div class="art-name">Sevan the Cat</div>
+            <div class="art-stats"><span class="upvote">↑</span> r/DeadlockTheGame</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- THUMBNAILS -->
+    <div class="works-section">
+      <div class="works-section-title">YouTube Thumbnails — SirActionSlacks</div>
+      <div class="slider">
+
+        <div class="art-card wide" onclick="openLightbox('assets/Artwork/thumbnails/1 - Thumbnail_SirActionSlacks.png', this)">
+          <img class="art-thumb" src="assets/Artwork/thumbnails/1 - Thumbnail_SirActionSlacks.png" alt="Slacks Thumbnail 1" loading="lazy">
+          <div class="art-desc"><div class="art-name">SirActionSlacks #1</div></div>
+        </div>
+        <div class="art-card wide" onclick="openLightbox('assets/Artwork/thumbnails/2 - Thumbnail_SirActionSlacks5.png', this)">
+          <img class="art-thumb" src="assets/Artwork/thumbnails/2 - Thumbnail_SirActionSlacks5.png" alt="Slacks Thumbnail 2" loading="lazy">
+          <div class="art-desc"><div class="art-name">SirActionSlacks #2</div></div>
+        </div>
+        <div class="art-card wide" onclick="openLightbox('assets/Artwork/thumbnails/3 - Thumbnail_SirActionSlacks2.png', this)">
+          <img class="art-thumb" src="assets/Artwork/thumbnails/3 - Thumbnail_SirActionSlacks2.png" alt="Slacks Thumbnail 3" loading="lazy">
+          <div class="art-desc"><div class="art-name">SirActionSlacks #3</div></div>
+        </div>
+        <div class="art-card wide" onclick="openLightbox('assets/Artwork/thumbnails/4 - Thumbnail_SirActionSlacks4.png', this)">
+          <img class="art-thumb" src="assets/Artwork/thumbnails/4 - Thumbnail_SirActionSlacks4.png" alt="Slacks Thumbnail 4" loading="lazy">
+          <div class="art-desc"><div class="art-name">SirActionSlacks #4</div></div>
+        </div>
+        <div class="art-card wide" onclick="openLightbox('assets/Artwork/thumbnails/5 - Thumbnail_SirActionSlacks3.png', this)">
+          <img class="art-thumb" src="assets/Artwork/thumbnails/5 - Thumbnail_SirActionSlacks3.png" alt="Slacks Thumbnail 5" loading="lazy">
+          <div class="art-desc"><div class="art-name">SirActionSlacks #5</div></div>
+        </div>
+        <div class="art-card wide" onclick="openLightbox('assets/Artwork/thumbnails/6 - Thumbnail_SirActionSlacks7.png', this)">
+          <img class="art-thumb" src="assets/Artwork/thumbnails/6 - Thumbnail_SirActionSlacks7.png" alt="Slacks Thumbnail 6" loading="lazy">
+          <div class="art-desc"><div class="art-name">SirActionSlacks #6</div></div>
+        </div>
+        <div class="art-card wide" onclick="openLightbox('assets/Artwork/thumbnails/7 - Thumbnail_SirActionSlacks6.png', this)">
+          <img class="art-thumb" src="assets/Artwork/thumbnails/7 - Thumbnail_SirActionSlacks6.png" alt="Slacks Thumbnail 7" loading="lazy">
+          <div class="art-desc"><div class="art-name">SirActionSlacks #7</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STICKERS -->
+    <div class="works-section">
+      <div class="works-section-title">Dota 2 Stickers <span style="font-size:13px;color:#9a8a72;">— went viral on Twitter</span></div>
+      <div class="slider">
+        <div class="sticker-card" onclick="openLightbox('assets/Artwork/stickers/1 - D2 EG Stickers.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/stickers/1 - D2 EG Stickers.jpg" alt="EG Stickers 1" loading="lazy">
+          <div class="art-desc"><div class="art-name">EG Stickers</div></div>
+        </div>
+        <div class="sticker-card" onclick="openLightbox('assets/Artwork/stickers/2- D2 EG Stickers.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/stickers/2- D2 EG Stickers.jpg" alt="EG Stickers 2" loading="lazy">
+          <div class="art-desc"><div class="art-name">EG Stickers</div></div>
+        </div>
+        <div class="sticker-card" onclick="openLightbox('assets/Artwork/stickers/3- D2 EG Stickers (4).jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/stickers/3- D2 EG Stickers (4).jpg" alt="EG Stickers 3" loading="lazy">
+          <div class="art-desc"><div class="art-name">EG Stickers</div></div>
+        </div>
+        <div class="sticker-card" onclick="openLightbox('assets/Artwork/stickers/4 - D2 EG Stickers (1).jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/stickers/4 - D2 EG Stickers (1).jpg" alt="EG Stickers 4" loading="lazy">
+          <div class="art-desc"><div class="art-name">EG Stickers (×2)</div></div>
+        </div>
+      </div>
+    <div class="works-section">
+      <div class="works-section-title">Animations</div>
+      <div class="slider">
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Animations/1 - D2 - Crazy Heroes GIF.gif', this)">
+          <img class="art-thumb" src="assets/Artwork/Animations/1 - D2 - Crazy Heroes GIF.gif" alt="Crazy Heroes" loading="lazy">
+          <div class="art-desc"><div class="art-name">D2 Crazy Heroes</div><div class="art-stats">GIF</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Animations/2 - Walking Cycle - Digital (GIF).gif', this)">
+          <img class="art-thumb" src="assets/Artwork/Animations/2 - Walking Cycle - Digital (GIF).gif" alt="Walking Cycle" loading="lazy">
+          <div class="art-desc"><div class="art-name">Walking Cycle</div><div class="art-stats">GIF</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Animations/3 - Turnaround GIF.gif', this)">
+          <img class="art-thumb" src="assets/Artwork/Animations/3 - Turnaround GIF.gif" alt="Turnaround" loading="lazy">
+          <div class="art-desc"><div class="art-name">Turnaround</div><div class="art-stats">GIF</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Animations/4 - shrimpcat GIF.gif', this)">
+          <img class="art-thumb" src="assets/Artwork/Animations/4 - shrimpcat GIF.gif" alt="Shrimpcat" loading="lazy">
+          <div class="art-desc"><div class="art-name">Shrimpcat</div><div class="art-stats">GIF</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Animations/5 - Somtimes I think GIF.gif', this)">
+          <img class="art-thumb" src="assets/Artwork/Animations/5 - Somtimes I think GIF.gif" alt="Sometimes I Think" loading="lazy">
+          <div class="art-desc"><div class="art-name">Sometimes I Think...</div><div class="art-stats">GIF</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/Animations/6 - Crazy Cat GIF.gif', this)">
+          <img class="art-thumb" src="assets/Artwork/Animations/6 - Crazy Cat GIF.gif" alt="Crazy Cat" loading="lazy">
+          <div class="art-desc"><div class="art-name">Crazy Cat</div><div class="art-stats">GIF</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PNG TUBER -->
+    <div class="works-section">
+      <div class="works-section-title">PNGTuber — Hoodwink Slacks</div>
+      <div class="slider">
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 1.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 1.png" alt="Hoodwink Slacks 1" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 1</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 2.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 2.png" alt="Hoodwink Slacks 2" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 2</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 3.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 3.png" alt="Hoodwink Slacks 3" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 3</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 4.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 4.png" alt="Hoodwink Slacks 4" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 4</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 5.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 5.png" alt="Hoodwink Slacks 5" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 5</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 6.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 6.png" alt="Hoodwink Slacks 6" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 6</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 7.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 7.png" alt="Hoodwink Slacks 7" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 7</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 8.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 8.png" alt="Hoodwink Slacks 8" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 8</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 9.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 9.png" alt="Hoodwink Slacks 9" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 9</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 10.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 10.png" alt="Hoodwink Slacks 10" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 10</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 11.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 11.png" alt="Hoodwink Slacks 11" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 11</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 12.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 12.png" alt="Hoodwink Slacks 12" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 12</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/PNG Tuber/Hoodwink Slacks 13.png', this)">
+          <img class="art-thumb" src="assets/Artwork/PNG Tuber/Hoodwink Slacks 13.png" alt="Hoodwink Slacks 13" loading="lazy">
+          <div class="art-desc"><div class="art-name">Hoodwink Slacks 13</div><div class="art-stats">PNGTuber</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOODLES -->
+    <div class="works-section">
+      <div class="works-section-title">Doodles</div>
+      <div class="slider">
+
+        <div class="art-card" onclick="openLightbox('assets/Artwork/doodles/1 - Dota Doodle Bounty Hunter.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/doodles/1 - Dota Doodle Bounty Hunter.jpg" alt="Bounty Hunter" loading="lazy">
+          <div class="art-desc"><div class="art-name">Bounty Hunter</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/doodles/2 - Dota Doodle Lina and CM Doodle - Traditional.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/doodles/2 - Dota Doodle Lina and CM Doodle - Traditional.jpg" alt="Lina and CM" loading="lazy">
+          <div class="art-desc"><div class="art-name">Lina &amp; CM</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/doodles/3 - Random - Doodles - Digital.png', this)">
+          <img class="art-thumb" src="assets/Artwork/doodles/3 - Random - Doodles - Digital.png" alt="Random Doodles" loading="lazy">
+          <div class="art-desc"><div class="art-name">Random Doodles</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/doodles/4 - Dota doodle Radiant Ancient - Digital.png', this)">
+          <img class="art-thumb" src="assets/Artwork/doodles/4 - Dota doodle Radiant Ancient - Digital.png" alt="Radiant Ancient" loading="lazy">
+          <div class="art-desc"><div class="art-name">Radiant Ancient</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/doodles/5 - Random - Office concept Art - Digital.png', this)">
+          <img class="art-thumb" src="assets/Artwork/doodles/5 - Random - Office concept Art - Digital.png" alt="Office Concept Art" loading="lazy">
+          <div class="art-desc"><div class="art-name">Office Concept Art</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/doodles/6 - Jinx Doodle - Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/doodles/6 - Jinx Doodle - Digital.jpg" alt="Jinx Doodle" loading="lazy">
+          <div class="art-desc"><div class="art-name">Jinx Doodle</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/doodles/7 - Random - Meows - Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/doodles/7 - Random - Meows - Digital.jpg" alt="Meows" loading="lazy">
+          <div class="art-desc"><div class="art-name">Meows</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/doodles/8 - Random Doodle Steampunk Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/doodles/8 - Random Doodle Steampunk Digital.jpg" alt="Steampunk" loading="lazy">
+          <div class="art-desc"><div class="art-name">Steampunk</div></div>
+        </div>
+        <div class="art-card" onclick="openLightbox('assets/Artwork/doodles/9 - Random Doodle Steampunk Digital.jpg', this)">
+          <img class="art-thumb" src="assets/Artwork/doodles/9 - Random Doodle Steampunk Digital.jpg" alt="Steampunk 2" loading="lazy">
+          <div class="art-desc"><div class="art-name">Steampunk #2</div></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ===================== LIGHTBOX ===================== -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
+  <button id="lightbox-prev" onclick="lightboxNav(-1)" aria-label="Previous">&#8592;</button>
+  <img id="lightbox-img" src="" alt="" onclick="lightboxNav(1)">
+  <button id="lightbox-next" onclick="lightboxNav(1)" aria-label="Next">&#8594;</button>
+</div>
+
+
+<!-- ===================== SCRIPTS ===================== -->
+<script>
+function btnPress(el) {
+  el.classList.add('pressed');
+  setTimeout(() => el.classList.remove('pressed'), 180);
+}
+
+function openPopup(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closePopup(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function openWorks() {
+  document.getElementById('works-page').classList.add('open');
+  document.body.style.overflow = 'auto';
+}
+function closeWorks() {
+  document.getElementById('works-page').classList.remove('open');
+  document.body.style.overflow = 'hidden';
+}
+
+let drag = { el: null, ox: 0, oy: 0, ex: 0, ey: 0 };
+function startDrag(e, id) {
+  const el = document.getElementById(id);
+  drag.el = el;
+  const r = el.getBoundingClientRect();
+  drag.ex = r.left;
+  drag.ey = r.top;
+  drag.ox = e.clientX;
+  drag.oy = e.clientY;
+  el.style.position = 'fixed';
+  e.preventDefault();
+}
+document.addEventListener('mousemove', e => {
+  if (!drag.el) return;
+  drag.el.style.left = (drag.ex + e.clientX - drag.ox) + 'px';
+  drag.el.style.top  = (drag.ey + e.clientY - drag.oy) + 'px';
+});
+document.addEventListener('mouseup', () => { drag.el = null; });
+
+// ---- LIGHTBOX WITH NAVIGATION ----
+let lightboxImages = [];
+let lightboxIndex  = 0;
+
+function openLightbox(src, sectionEl) {
+  // collect all art-thumb srcs from the same section
+  const section = sectionEl.closest('.works-section');
+  const cards   = section ? [...section.querySelectorAll('.art-card')] : [];
+  lightboxImages = cards.map(c => c.querySelector('.art-thumb').src);
+  lightboxIndex  = lightboxImages.findIndex(s => s === sectionEl.querySelector('.art-thumb').src);
+  if (lightboxIndex === -1) { lightboxImages = [src]; lightboxIndex = 0; }
+  showLightboxImage();
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function showLightboxImage() {
+  document.getElementById('lightbox-img').src = lightboxImages[lightboxIndex];
+  document.getElementById('lightbox-prev').style.visibility = lightboxIndex > 0 ? 'visible' : 'hidden';
+  document.getElementById('lightbox-next').style.visibility = lightboxIndex < lightboxImages.length - 1 ? 'visible' : 'hidden';
+}
+
+function lightboxNav(dir) {
+  lightboxIndex = Math.max(0, Math.min(lightboxImages.length - 1, lightboxIndex + dir));
+  showLightboxImage();
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightbox-img').src = '';
+  lightboxImages = [];
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape')      { closeLightbox(); ['popup-about','popup-links','popup-contact'].forEach(closePopup); }
+  if (e.key === 'ArrowLeft')   lightboxNav(-1);
+  if (e.key === 'ArrowRight')  lightboxNav(1);
+});
+
+// close lightbox when clicking the dark backdrop (not the image or arrows)
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+</script>
+
+</body>
+</html>
